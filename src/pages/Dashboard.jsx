@@ -25,6 +25,7 @@ function Dashboard() {
 
   useEffect(() => {
     if (!profile) return;
+
     const fetchData = async () => {
       setLoading(true);
       setError(null);
@@ -45,6 +46,7 @@ function Dashboard() {
         setLoading(false);
       }
     };
+
     fetchData();
   }, [profile]);
 
@@ -55,12 +57,12 @@ function Dashboard() {
     <div className="space-y-8 animate-fade-in pb-10">
       
       {/* Wholesome Welcome Banner */}
-      <div className="relative overflow-hidden rounded-3xl p-8 bg-gradient-to-r from-indigo-900 via-purple-900 to-background border border-white/10 shadow-2xl">
+      <div className="relative overflow-hidden rounded-3xl p-4 sm:p-6 md:p-8 bg-gradient-to-r from-indigo-900 via-purple-900 to-background border border-white/10 shadow-2xl">
         <div className="relative z-10">
-          <h1 className="text-4xl font-extrabold text-white mb-2">
+          <h1 className="text-2xl md:text-4xl font-extrabold text-white mb-2">
             Welcome, {profile.team_name}! 👋
           </h1>
-          <p className="text-lg text-gray-300 font-light max-w-2xl">
+          <p className="text-sm md:text-lg text-gray-300 font-light max-w-2xl">
             You're doing great! Stay focused, check your modules, and let's conquer YLES together.
           </p>
         </div>
@@ -100,10 +102,10 @@ function Dashboard() {
             <h3 className="text-sm font-bold text-text-secondary uppercase tracking-wider mb-4">Current Balance</h3>
             
             <div className="flex items-end gap-2 mb-2">
-              <span className={`text-4xl font-mono font-bold ${profile.current_balance > 0 ? 'text-white' : 'text-error'}`}>
+              <span className={`text-2xl md:text-4xl font-mono font-bold ${profile.current_balance > 0 ? 'text-white' : 'text-error'}`}>
                  ${profile.current_balance}
               </span>
-              <span className="text-sm text-text-secondary mb-1">/ ${profile.security_deposit_initial}</span>
+              <span className="text-xs md:text-sm text-text-secondary mb-1">/ ${profile.security_deposit_initial}</span>
             </div>
             
             <div className="mt-4 pt-4 border-t border-white/10 text-sm flex justify-between">

@@ -34,8 +34,8 @@ function AdminTeams() {
   return (
     <div className="animate-fade-in">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-white mb-2">Manage Team Progress & Fines</h1>
-        <p className="text-text-secondary">
+        <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">Manage Team Progress & Fines</h1>
+        <p className="text-sm md:text-base text-text-secondary">
           Click "Manage" on a team to update their progress or add a fine.
         </p>
       </div>
@@ -45,22 +45,22 @@ function AdminTeams() {
           <table className="w-full text-left border-collapse">
             <thead className="bg-white/5 border-b border-white/10 text-xs uppercase text-text-secondary font-semibold">
               <tr>
-                <th className="px-6 py-4">Team Name</th>
-                <th className="px-6 py-4">Balance</th>
-                <th className="px-6 py-4 text-center">Actions</th>
+                <th className="px-3 md:px-6 py-3 md:py-4">Team Name</th>
+                <th className="px-3 md:px-6 py-3 md:py-4">Balance</th>
+                <th className="px-3 md:px-6 py-3 md:py-4 text-center">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5">
               {teams.map((team) => (
                 <tr key={team.id} className="hover:bg-white/5 transition-colors duration-150">
-                  <td className="px-6 py-4 font-medium text-white">{team.team_name}</td>
-                  <td className={`px-6 py-4 font-mono font-bold ${team.current_balance < 0 ? 'text-error' : 'text-success'}`}>
+                  <td className="px-3 md:px-6 py-3 md:py-4 font-medium text-white">{team.team_name}</td>
+                  <td className={`px-3 md:px-6 py-3 md:py-4 font-mono font-bold ${team.current_balance < 0 ? 'text-error' : 'text-success'}`}>
                     ${team.current_balance}
                   </td>
-                  <td className="px-6 py-4 text-center">
-                    <button 
-                      onClick={() => openModal(team)} 
-                      className="px-4 py-2 text-sm bg-transparent border border-primary text-primary hover:bg-primary hover:text-white rounded-lg transition-all duration-200"
+                  <td className="px-3 md:px-6 py-3 md:py-4 text-center">
+                    <button
+                      onClick={() => openModal(team)}
+                      className="px-4 py-2 text-sm bg-transparent border border-primary text-primary hover:bg-primary hover:text-white rounded-lg transition-all duration-200 min-w-[80px]"
                     >
                       Manage
                     </button>
