@@ -1,4 +1,3 @@
-// src/context/AuthContext.jsx
 import { createContext, useState, useEffect, useContext } from 'react';
 import { supabase } from '../lib/supabaseClient';
 
@@ -12,7 +11,6 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     let mounted = true;
 
-    // 1. Helper to fetch profile
     const fetchProfile = async (userId) => {
       try {
         const { data, error } = await supabase
@@ -21,7 +19,7 @@ export function AuthProvider({ children }) {
           .eq('id', userId)
           .single();
         
-        if (mounted && !error && data) {
+        if (mounted && data) {
           setProfile(data);
         }
       } catch (err) {
@@ -29,65 +27,56 @@ export function AuthProvider({ children }) {
       }
     };
 
-    // 2. Initial Session Load
+    // 1. Initial Session Check
     const initializeAuth = async () => {
       try {
         const { data: { session: initialSession } } = await supabase.auth.getSession();
         
-        if (mounted && initialSession) {
-          setSession(initialSession);
-          await fetchProfile(initialSession.user.id);
+        if (mounted) {
+          if (initialSession) {
+            setSession(initialSession);
+            await fetchProfile(initialSession.user.id);
+          }
+          setLoading(false);
         }
       } catch (error) {
         console.error("Auth init error:", error);
-      } finally {
         if (mounted) setLoading(false);
       }
     };
 
     initializeAuth();
 
-    // 3. Listen for Supabase Auth Changes
+    // 2. Event Listener - The Source of Truth
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, currentSession) => {
         if (!mounted) return;
-        
+
+        console.log("Auth Event:", event); // Debugging helper
+
         if (currentSession) {
           setSession(currentSession);
-          if (!profile) await fetchProfile(currentSession.user.id);
+          
+          // Only fetch profile if we don't have it, or if the user changed
+          // We check 'event' to ensure we don't re-fetch unnecessarily on 'INITIAL_SESSION'
+          if (!profile || (profile && profile.id !== currentSession.user.id)) {
+            await fetchProfile(currentSession.user.id);
+          }
         } else {
+          // Logged out
           setSession(null);
           setProfile(null);
         }
+        
         setLoading(false);
       }
     );
 
-    // --- 4. NEW: Auto-Logout on Tab Switch ---
-    const handleVisibilityChange = async () => {
-      // If the user hides the tab (switches tabs, minimizes window)
-      if (document.hidden) {
-        console.log("Tab hidden: Auto-logging out for security/connection reset.");
-        
-        // 1. Clear local state immediately to trigger redirect
-        if (mounted) {
-          setSession(null);
-          setProfile(null);
-        }
-
-        // 2. Kill the Supabase session
-        await supabase.auth.signOut();
-      }
-    };
-
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-
     return () => {
       mounted = false;
       subscription.unsubscribe();
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, []);
+  }, []); // Empty dependency array is correct here
 
   const value = { session, profile, loading };
 
