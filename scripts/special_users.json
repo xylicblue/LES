@@ -1,0 +1,242 @@
+[
+  {
+    "email": "events-001@investo.local",
+    "password": "Investo2025!",
+    "data": {
+      "team_name": "EVENTS-001",
+      "role": "events"
+    }
+  },
+  {
+    "email": "events-002@investo.local",
+    "password": "Investo2025!",
+    "data": {
+      "team_name": "EVENTS-002",
+      "role": "events"
+    }
+  },
+  {
+    "email": "events-003@investo.local",
+    "password": "Investo2025!",
+    "data": {
+      "team_name": "EVENTS-003",
+      "role": "events"
+    }
+  },
+  {
+    "email": "events-004@investo.local",
+    "password": "Investo2025!",
+    "data": {
+      "team_name": "EVENTS-004",
+      "role": "events"
+    }
+  },
+  {
+    "email": "events-005@investo.local",
+    "password": "Investo2025!",
+    "data": {
+      "team_name": "EVENTS-005",
+      "role": "events"
+    }
+  },
+  {
+    "email": "fnr-001@investo.local",
+    "password": "Investo2025!",
+    "data": {
+      "team_name": "FNR-001",
+      "role": "fnr"
+    }
+  },
+  {
+    "email": "fnr-002@investo.local",
+    "password": "Investo2025!",
+    "data": {
+      "team_name": "FNR-002",
+      "role": "fnr"
+    }
+  },
+  {
+    "email": "fnr-003@investo.local",
+    "password": "Investo2025!",
+    "data": {
+      "team_name": "FNR-003",
+      "role": "fnr"
+    }
+  },
+  {
+    "email": "fnr-004@investo.local",
+    "password": "Investo2025!",
+    "data": {
+      "team_name": "FNR-004",
+      "role": "fnr"
+    }
+  },
+  {
+    "email": "fnr-005@investo.local",
+    "password": "Investo2025!",
+    "data": {
+      "team_name": "FNR-005",
+      "role": "fnr"
+    }
+  },
+  {
+    "email": "dc-001@investo.local",
+    "password": "Investo2025!",
+    "data": {
+      "team_name": "DC-001",
+      "role": "dc"
+    }
+  },
+  {
+    "email": "dc-002@investo.local",
+    "password": "Investo2025!",
+    "data": {
+      "team_name": "DC-002",
+      "role": "dc"
+    }
+  },
+  {
+    "email": "dc-003@investo.local",
+    "password": "Investo2025!",
+    "data": {
+      "team_name": "DC-003",
+      "role": "dc"
+    }
+  },
+  {
+    "email": "dc-004@investo.local",
+    "password": "Investo2025!",
+    "data": {
+      "team_name": "DC-004",
+      "role": "dc"
+    }
+  },
+  {
+    "email": "dc-005@investo.local",
+    "password": "Investo2025!",
+    "data": {
+      "team_name": "DC-005",
+      "role": "dc"
+    }
+  },
+  {
+    "email": "dc-006@investo.local",
+    "password": "Investo2025!",
+    "data": {
+      "team_name": "DC-006",
+      "role": "dc"
+    }
+  },
+  {
+    "email": "dc-007@investo.local",
+    "password": "Investo2025!",
+    "data": {
+      "team_name": "DC-007",
+      "role": "dc"
+    }
+  },
+  {
+    "email": "dc-008@investo.local",
+    "password": "Investo2025!",
+    "data": {
+      "team_name": "DC-008",
+      "role": "dc"
+    }
+  },
+  {
+    "email": "dc-009@investo.local",
+    "password": "Investo2025!",
+    "data": {
+      "team_name": "DC-009",
+      "role": "dc"
+    }
+  },
+  {
+    "email": "dc-010@investo.local",
+    "password": "Investo2025!",
+    "data": {
+      "team_name": "DC-010",
+      "role": "dc"
+    }
+  },
+  {
+    "email": "dc-011@investo.local",
+    "password": "Investo2025!",
+    "data": {
+      "team_name": "DC-011",
+      "role": "dc"
+    }
+  },
+  {
+    "email": "dc-012@investo.local",
+    "password": "Investo2025!",
+    "data": {
+      "team_name": "DC-012",
+      "role": "dc"
+    }
+  },
+  {
+    "email": "dc-013@investo.local",
+    "password": "Investo2025!",
+    "data": {
+      "team_name": "DC-013",
+      "role": "dc"
+    }
+  },
+  {
+    "email": "dc-014@investo.local",
+    "password": "Investo2025!",
+    "data": {
+      "team_name": "DC-014",
+      "role": "dc"
+    }
+  },
+  {
+    "email": "dc-015@investo.local",
+    "password": "Investo2025!",
+    "data": {
+      "team_name": "DC-015",
+      "role": "dc"
+    }
+  },
+  {
+    "email": "dc-016@investo.local",
+    "password": "Investo2025!",
+    "data": {
+      "team_name": "DC-016",
+      "role": "dc"
+    }
+  },
+  {
+    "email": "dc-017@investo.local",
+    "password": "Investo2025!",
+    "data": {
+      "team_name": "DC-017",
+      "role": "dc"
+    }
+  },
+  {
+    "email": "dc-018@investo.local",
+    "password": "Investo2025!",
+    "data": {
+      "team_name": "DC-018",
+      "role": "dc"
+    }
+  },
+  {
+    "email": "dc-019@investo.local",
+    "password": "Investo2025!",
+    "data": {
+      "team_name": "DC-019",
+      "role": "dc"
+    }
+  },
+  {
+    "email": "dc-020@investo.local",
+    "password": "Investo2025!",
+    "data": {
+      "team_name": "DC-020",
+      "role": "dc"
+    }
+  }
+]
