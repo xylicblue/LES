@@ -9,14 +9,22 @@ function InfoHub() {
   useEffect(() => {
     const fetchModules = async () => {
       setLoading(true);
-      const { data, error } = await supabase
-        .from('modules')
-        .select('*')
-        .order('day', { ascending: true })
-        .order('start_time', { ascending: true, nullsFirst: false });
-      if (error) { setError(error.message); } else { setModules(data); }
-      setLoading(false);
+      setError(null);
+      try {
+        const { data, error } = await supabase
+          .from('modules')
+          .select('*')
+          .order('day', { ascending: true })
+          .order('start_time', { ascending: true, nullsFirst: false });
+        if (error) throw error;
+        setModules(data);
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
     };
+
     fetchModules();
   }, []);
 
@@ -46,8 +54,8 @@ function InfoHub() {
   return (
     <div className="animate-fade-in pb-10">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-white mb-2">Event Information</h1>
-        <p className="text-text-secondary">All the details you need for your modules and venues.</p>
+        <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">Event Information</h1>
+        <p className="text-sm md:text-base text-text-secondary">All the details you need for your modules and venues.</p>
       </div>
 
       <div className="grid gap-6">
@@ -57,7 +65,7 @@ function InfoHub() {
             {/* Header: Name, Day, Time */}
             <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4 mb-6">
               <div>
-                <h2 className="text-2xl font-bold text-white mb-2">{module.name}</h2>
+                <h2 className="text-xl md:text-2xl font-bold text-white mb-2">{module.name}</h2>
                 <div className="flex gap-2">
                   <span className="inline-block px-3 py-1 bg-white/5 rounded-full text-xs font-mono text-text-secondary uppercase tracking-widest border border-white/10">
                     Day {module.day}
@@ -81,7 +89,7 @@ function InfoHub() {
             {/* Content Sections */}
             <div className="space-y-4">
               
-              {/* 1. Round Guidelines (Standardized Box) */}
+              {/* 1. Round Guidelines */}
               {module.round_guidelines && (
                 <div className="p-5 bg-background/40 rounded-xl border border-white/5 hover:border-white/10 transition-colors">
                   <div className="flex items-center gap-2 mb-3">
@@ -94,11 +102,24 @@ function InfoHub() {
                 </div>
               )}
 
-              {/* 2. Case Study (Identical Standardized Box) */}
+              {/* 2. Submission Section (NEW) */}
+              {module.submission_info && (
+                <div className="p-5 bg-background/40 rounded-xl border border-white/5 hover:border-white/10 transition-colors">
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="text-xl">📤</span>
+                    <strong className="text-white text-sm uppercase tracking-wider">Submission</strong>
+                  </div>
+                  <p className="text-gray-300 leading-relaxed whitespace-pre-wrap pl-1">
+                    {renderWithLinks(module.submission_info)}
+                  </p>
+                </div>
+              )}
+
+              {/* 3. Case Study */}
               {module.description && (
                 <div className="p-5 bg-background/40 rounded-xl border border-white/5 hover:border-white/10 transition-colors">
                    <div className="flex items-center gap-2 mb-3">
-                    <span className="text-xl">📝</span>
+                    <span className="text-xl">💼</span>
                     <strong className="text-white text-sm uppercase tracking-wider">Case Study</strong>
                   </div>
                   <p className="text-gray-300 leading-relaxed whitespace-pre-wrap pl-1">
@@ -107,11 +128,11 @@ function InfoHub() {
                 </div>
               )}
 
-              {/* 3. Note (Simplified - No Yellow Warning) */}
+              {/* 4. Note */}
               {module.note && (
                 <div className="p-5 bg-background/40 rounded-xl border border-white/5 hover:border-white/10 transition-colors">
                    <div className="flex items-center gap-2 mb-3">
-                    <span className="text-xl">📌</span>
+                    <span className="text-xl">📝</span>
                     <strong className="text-white text-sm uppercase tracking-wider">Note</strong>
                   </div>
                   <p className="text-gray-300 leading-relaxed whitespace-pre-wrap pl-1">
@@ -130,7 +151,7 @@ function InfoHub() {
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 px-6 py-3 bg-secondary/10 text-secondary hover:bg-secondary hover:text-black font-bold rounded-lg transition-all duration-200"
                 >
-                  🗺️ View Venue Map
+                  📍 View Venue Map
                 </a>
               </div>
             )}
