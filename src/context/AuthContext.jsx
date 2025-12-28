@@ -11,8 +11,7 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     let mounted = true;
 
-    // 1. Helper to fetch profile
-    const getProfile = async (userId) => {
+    const fetchProfile = async (userId) => {
       try {
         const { data, error } = await supabase
           .from('profiles')
@@ -20,73 +19,66 @@ export function AuthProvider({ children }) {
           .eq('id', userId)
           .single();
         
-        if (mounted && !error) {
+        if (mounted && data) {
           setProfile(data);
         }
-      } catch (error) {
-        console.error('Error fetching profile:', error);
+      } catch (err) {
+        console.error("Profile fetch error:", err);
       }
     };
 
-    // 2. Setup Auth Listener
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        if (!mounted) return;
-        
-        // Handle explicit sign-outs or refreshed tokens immediately
-        if (event === 'SIGNED_OUT') {
-          setSession(null);
-          setProfile(null);
-          setLoading(false);
-        } else if (session) {
-          setSession(session);
-          await getProfile(session.user.id);
-          setLoading(false);
-        }
-      }
-    );
-
-    // 3. Initial Load
+    // 1. Initial Session Check
     const initializeAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (mounted) {
-        setSession(session);
-        if (session) {
-          await getProfile(session.user.id);
+      try {
+        const { data: { session: initialSession } } = await supabase.auth.getSession();
+        
+        if (mounted) {
+          if (initialSession) {
+            setSession(initialSession);
+            await fetchProfile(initialSession.user.id);
+          }
+          setLoading(false);
         }
-        setLoading(false);
+      } catch (error) {
+        console.error("Auth init error:", error);
+        if (mounted) setLoading(false);
       }
     };
 
     initializeAuth();
 
-    // 4. THE FIX: Revalidate on Tab Focus
-    const handleFocus = async () => {
-      // Force a session check when user comes back to the tab
-      const { data: { session } } = await supabase.auth.getSession();
-      if (mounted && session) {
-         setSession(session);
-         // Optional: Refresh profile if needed, but session is key
+    // 2. Event Listener - The Source of Truth
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, currentSession) => {
+        if (!mounted) return;
+
+        console.log("Auth Event:", event); // Debugging helper
+
+        if (currentSession) {
+          setSession(currentSession);
+          
+          // Only fetch profile if we don't have it, or if the user changed
+          // We check 'event' to ensure we don't re-fetch unnecessarily on 'INITIAL_SESSION'
+          if (!profile || (profile && profile.id !== currentSession.user.id)) {
+            await fetchProfile(currentSession.user.id);
+          }
+        } else {
+          // Logged out
+          setSession(null);
+          setProfile(null);
+        }
+        
+        setLoading(false);
       }
-    };
+    );
 
-    window.addEventListener('focus', handleFocus);
-    window.addEventListener('visibilitychange', handleFocus);
-
-    // Cleanup
     return () => {
       mounted = false;
       subscription.unsubscribe();
-      window.removeEventListener('focus', handleFocus);
-      window.removeEventListener('visibilitychange', handleFocus);
     };
-  }, []);
+  }, []); // Empty dependency array is correct here
 
-  const value = {
-    session,
-    profile,
-    loading
-  };
+  const value = { session, profile, loading };
 
   return (
     <AuthContext.Provider value={value}>
@@ -98,3 +90,5 @@ export function AuthProvider({ children }) {
 export function useAuth() {
   return useContext(AuthContext);
 }
+
+
