@@ -11,6 +11,7 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     let mounted = true;
 
+    // --- 1. Helper to fetch profile ---
     const fetchProfile = async (userId) => {
       try {
         const { data, error } = await supabase
@@ -19,7 +20,7 @@ export function AuthProvider({ children }) {
           .eq('id', userId)
           .single();
         
-        if (mounted && data) {
+        if (mounted && !error && data) {
           setProfile(data);
         }
       } catch (err) {
@@ -27,56 +28,84 @@ export function AuthProvider({ children }) {
       }
     };
 
-    // 1. Initial Session Check
+    // --- 2. Initial Load ---
     const initializeAuth = async () => {
       try {
         const { data: { session: initialSession } } = await supabase.auth.getSession();
         
-        if (mounted) {
-          if (initialSession) {
-            setSession(initialSession);
-            await fetchProfile(initialSession.user.id);
-          }
-          setLoading(false);
+        if (mounted && initialSession) {
+          setSession(initialSession);
+          await fetchProfile(initialSession.user.id);
         }
       } catch (error) {
         console.error("Auth init error:", error);
+      } finally {
         if (mounted) setLoading(false);
       }
     };
 
     initializeAuth();
 
-    // 2. Event Listener - The Source of Truth
+    // --- 3. Auth State Listener ---
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, currentSession) => {
         if (!mounted) return;
-
-        console.log("Auth Event:", event); // Debugging helper
-
+        
         if (currentSession) {
           setSession(currentSession);
-          
-          // Only fetch profile if we don't have it, or if the user changed
-          // We check 'event' to ensure we don't re-fetch unnecessarily on 'INITIAL_SESSION'
-          if (!profile || (profile && profile.id !== currentSession.user.id)) {
-            await fetchProfile(currentSession.user.id);
-          }
+          // Fetch profile if we don't have it yet
+          if (!profile) await fetchProfile(currentSession.user.id);
         } else {
           // Logged out
           setSession(null);
           setProfile(null);
         }
-        
         setLoading(false);
       }
     );
 
+    // --- 4. THE FIX: "Ping" Check on Tab Focus ---
+    const handleTabFocus = async () => {
+      // A. Check if Supabase thinks we have a session
+      const { data: { session: currentSession }, error: sessionError } = await supabase.auth.getSession();
+      
+      if (sessionError || !currentSession) {
+        // If Supabase says "No Session", ensure we are logged out
+        setSession(null);
+        setProfile(null);
+        return;
+      }
+
+      // B. REALITY CHECK: Try to read from the DB. 
+      // If this fails with 403/401, our token is dead ("Fake Logged In" state).
+      const { error: dbError } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('id', currentSession.user.id)
+        .single();
+
+      if (dbError) {
+        console.warn("Stale/Invalid session detected on focus. Forcing logout.");
+        
+        // 1. Kill the local state immediately (Redirects to Login)
+        setSession(null);
+        setProfile(null);
+        
+        // 2. Tell Supabase to cleanup
+        await supabase.auth.signOut();
+      }
+    };
+
+    window.addEventListener('focus', handleTabFocus);
+    window.addEventListener('visibilitychange', handleTabFocus);
+
     return () => {
       mounted = false;
       subscription.unsubscribe();
+      window.removeEventListener('focus', handleTabFocus);
+      window.removeEventListener('visibilitychange', handleTabFocus);
     };
-  }, []); // Empty dependency array is correct here
+  }, []); 
 
   const value = { session, profile, loading };
 
@@ -90,5 +119,3 @@ export function AuthProvider({ children }) {
 export function useAuth() {
   return useContext(AuthContext);
 }
-
-
