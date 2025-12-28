@@ -30,11 +30,11 @@ function Login() {
   };
 
   return (
-    <div className="flex justify-center items-center w-full min-h-screen bg-gradient-to-br from-[#1a0e14] via-[#121212] to-[#2d1b69]">
-      <div className="w-full max-w-md p-8 rounded-2xl bg-surface/60 backdrop-blur-xl border border-white/10 shadow-2xl">
+    <div className="flex justify-center items-center w-full min-h-screen bg-gradient-to-br from-[#1a0e14] via-[#121212] to-[#2d1b69] px-4">
+      <div className="w-full max-w-md p-4 sm:p-8 rounded-2xl bg-surface/60 backdrop-blur-xl border border-white/10 shadow-2xl">
         <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-white mb-2">YLES Login</h2>
-          <p className="text-text-secondary">Sign in with your assigned team credentials</p>
+          <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">YLES Login</h2>
+          <p className="text-sm sm:text-base text-text-secondary">Sign in with your assigned team credentials</p>
         </div>
         
         <form onSubmit={handleLogin} className="space-y-4">

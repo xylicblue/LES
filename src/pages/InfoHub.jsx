@@ -9,14 +9,22 @@ function InfoHub() {
   useEffect(() => {
     const fetchModules = async () => {
       setLoading(true);
-      const { data, error } = await supabase
-        .from('modules')
-        .select('*')
-        .order('day', { ascending: true })
-        .order('start_time', { ascending: true, nullsFirst: false });
-      if (error) { setError(error.message); } else { setModules(data); }
-      setLoading(false);
+      setError(null);
+      try {
+        const { data, error } = await supabase
+          .from('modules')
+          .select('*')
+          .order('day', { ascending: true })
+          .order('start_time', { ascending: true, nullsFirst: false });
+        if (error) throw error;
+        setModules(data);
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
     };
+
     fetchModules();
   }, []);
 
@@ -46,8 +54,8 @@ function InfoHub() {
   return (
     <div className="animate-fade-in pb-10">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-white mb-2">Event Information</h1>
-        <p className="text-text-secondary">All the details you need for your modules and venues.</p>
+        <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">Event Information</h1>
+        <p className="text-sm md:text-base text-text-secondary">All the details you need for your modules and venues.</p>
       </div>
 
       <div className="grid gap-6">
@@ -57,7 +65,7 @@ function InfoHub() {
             {/* Header: Name, Day, Time */}
             <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4 mb-6">
               <div>
-                <h2 className="text-2xl font-bold text-white mb-2">{module.name}</h2>
+                <h2 className="text-xl md:text-2xl font-bold text-white mb-2">{module.name}</h2>
                 <div className="flex gap-2">
                   <span className="inline-block px-3 py-1 bg-white/5 rounded-full text-xs font-mono text-text-secondary uppercase tracking-widest border border-white/10">
                     Day {module.day}

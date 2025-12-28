@@ -32,7 +32,6 @@ function AdminModules() {
 
   const fetchModules = async () => {
     setLoading(true);
-    // Fetch all columns
     const { data, error } = await supabase.from('modules').select('*').order('day', { ascending: true }).order('start_time', { ascending: true });
     if (error) { setError(error.message); } else { setModules(data); }
     setLoading(false);
@@ -85,13 +84,13 @@ function AdminModules() {
 
   return (
     <div className="animate-fade-in">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold text-white">Manage Modules</h1>
-        <button onClick={openCreateModal} className="px-4 py-2 bg-success text-white rounded-lg font-semibold hover:bg-green-600 transition-colors shadow-lg">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+        <h1 className="text-2xl md:text-3xl font-bold text-white">Manage Modules</h1>
+        <button onClick={openCreateModal} className="px-4 py-2 bg-success text-white rounded-lg font-semibold hover:bg-green-600 transition-colors shadow-lg whitespace-nowrap">
           + Create New Module
         </button>
       </div>
-      
+
       {error && <div className="p-4 mb-6 bg-error/20 border border-error text-red-200 rounded-lg">Error: {error}</div>}
 
       <div className="bg-surface rounded-xl border border-white/10 overflow-hidden shadow-lg">
@@ -99,23 +98,23 @@ function AdminModules() {
           <table className="w-full text-left border-collapse">
             <thead className="bg-white/5 border-b border-white/10 text-xs uppercase text-text-secondary font-semibold">
               <tr>
-                <th className="px-6 py-4">Name</th>
-                <th className="px-6 py-4">Day</th>
-                <th className="px-6 py-4">Time</th>
-                <th className="px-6 py-4">Venue</th>
-                <th className="px-6 py-4 text-center">Actions</th>
+                <th className="px-3 md:px-6 py-3 md:py-4">Name</th>
+                <th className="px-3 md:px-6 py-3 md:py-4">Day</th>
+                <th className="px-3 md:px-6 py-3 md:py-4">Time</th>
+                <th className="px-3 md:px-6 py-3 md:py-4">Venue</th>
+                <th className="px-3 md:px-6 py-3 md:py-4 text-center">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5">
               {modules.map(module => (
                 <tr key={module.id} className="hover:bg-white/5 transition-colors duration-150">
-                  <td className="px-6 py-4 font-medium text-white">{module.name}</td>
-                  <td className="px-6 py-4 text-text-secondary">{module.day}</td>
-                  <td className="px-6 py-4 text-text-secondary">{module.start_time ? new Date(module.start_time).toLocaleString() : 'TBD'}</td>
-                  <td className="px-6 py-4 text-text-secondary">{module.venue}</td>
-                  <td className="px-6 py-4 text-center">
-                    <button onClick={() => openEditModal(module)} className="text-blue-400 hover:text-blue-300 mr-4 transition-colors">Edit</button>
-                    <button onClick={() => handleDelete(module.id)} className="text-error hover:text-red-400 transition-colors">Delete</button>
+                  <td className="px-3 md:px-6 py-3 md:py-4 font-medium text-white">{module.name}</td>
+                  <td className="px-3 md:px-6 py-3 md:py-4 text-text-secondary">{module.day}</td>
+                  <td className="px-3 md:px-6 py-3 md:py-4 text-text-secondary text-sm">{module.start_time ? new Date(module.start_time).toLocaleString() : 'TBD'}</td>
+                  <td className="px-3 md:px-6 py-3 md:py-4 text-text-secondary">{module.venue}</td>
+                  <td className="px-3 md:px-6 py-3 md:py-4 text-center">
+                    <button onClick={() => openEditModal(module)} className="text-blue-400 hover:text-blue-300 px-3 py-2 mr-2 transition-colors rounded">Edit</button>
+                    <button onClick={() => handleDelete(module.id)} className="text-error hover:text-red-400 px-3 py-2 transition-colors rounded">Delete</button>
                   </td>
                 </tr>
               ))}
@@ -131,8 +130,8 @@ function AdminModules() {
         classNames={{ modal: 'bg-surface rounded-xl border border-white/10 shadow-2xl p-0', closeButton: 'fill-white' }}
         styles={{ modal: { backgroundColor: '#1e1e1e', borderRadius: '1rem', padding: 0 } }}
       >
-        <div className="p-8 w-[600px] max-h-[90vh] overflow-y-auto custom-scrollbar">
-          <h2 className="text-2xl font-bold text-white mb-6">{currentModule.id ? 'Edit Module' : 'Create New Module'}</h2>
+        <div className="p-4 md:p-8 w-full max-w-[600px] max-h-[90vh] overflow-y-auto custom-scrollbar">
+          <h2 className="text-xl md:text-2xl font-bold text-white mb-6">{currentModule.id ? 'Edit Module' : 'Create New Module'}</h2>
           <form onSubmit={handleSubmit} className="space-y-4">
             
             {/* Standard Fields */}
@@ -141,7 +140,7 @@ function AdminModules() {
               <input type="text" name="name" value={currentModule.name} onChange={handleChange} required className="w-full p-3 bg-background border border-white/10 rounded-lg text-white focus:border-primary focus:outline-none" />
             </div>
             
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1">
                 <label className="text-sm text-text-secondary">Day</label>
                 <input type="number" name="day" min="1" max="3" value={currentModule.day} onChange={handleChange} required className="w-full p-3 bg-background border border-white/10 rounded-lg text-white focus:border-primary focus:outline-none" />
