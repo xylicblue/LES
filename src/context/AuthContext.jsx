@@ -1,3 +1,4 @@
+// src/context/AuthContext.jsx
 import { createContext, useState, useEffect, useContext } from 'react';
 import { supabase } from '../lib/supabaseClient';
 
@@ -11,7 +12,7 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     let mounted = true;
 
-    // --- 1. Helper to fetch profile ---
+    // 1. Helper to fetch profile
     const fetchProfile = async (userId) => {
       try {
         const { data, error } = await supabase
@@ -28,7 +29,7 @@ export function AuthProvider({ children }) {
       }
     };
 
-    // --- 2. Initial Load ---
+    // 2. Initial Session Load
     const initializeAuth = async () => {
       try {
         const { data: { session: initialSession } } = await supabase.auth.getSession();
@@ -46,17 +47,15 @@ export function AuthProvider({ children }) {
 
     initializeAuth();
 
-    // --- 3. Auth State Listener ---
+    // 3. Listen for Supabase Auth Changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, currentSession) => {
         if (!mounted) return;
         
         if (currentSession) {
           setSession(currentSession);
-          // Fetch profile if we don't have it yet
           if (!profile) await fetchProfile(currentSession.user.id);
         } else {
-          // Logged out
           setSession(null);
           setProfile(null);
         }
@@ -64,48 +63,31 @@ export function AuthProvider({ children }) {
       }
     );
 
-    // --- 4. THE FIX: "Ping" Check on Tab Focus ---
-    const handleTabFocus = async () => {
-      // A. Check if Supabase thinks we have a session
-      const { data: { session: currentSession }, error: sessionError } = await supabase.auth.getSession();
-      
-      if (sessionError || !currentSession) {
-        // If Supabase says "No Session", ensure we are logged out
-        setSession(null);
-        setProfile(null);
-        return;
-      }
-
-      // B. REALITY CHECK: Try to read from the DB. 
-      // If this fails with 403/401, our token is dead ("Fake Logged In" state).
-      const { error: dbError } = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('id', currentSession.user.id)
-        .single();
-
-      if (dbError) {
-        console.warn("Stale/Invalid session detected on focus. Forcing logout.");
+    // --- 4. NEW: Auto-Logout on Tab Switch ---
+    const handleVisibilityChange = async () => {
+      // If the user hides the tab (switches tabs, minimizes window)
+      if (document.hidden) {
+        console.log("Tab hidden: Auto-logging out for security/connection reset.");
         
-        // 1. Kill the local state immediately (Redirects to Login)
-        setSession(null);
-        setProfile(null);
-        
-        // 2. Tell Supabase to cleanup
+        // 1. Clear local state immediately to trigger redirect
+        if (mounted) {
+          setSession(null);
+          setProfile(null);
+        }
+
+        // 2. Kill the Supabase session
         await supabase.auth.signOut();
       }
     };
 
-    window.addEventListener('focus', handleTabFocus);
-    window.addEventListener('visibilitychange', handleTabFocus);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
 
     return () => {
       mounted = false;
       subscription.unsubscribe();
-      window.removeEventListener('focus', handleTabFocus);
-      window.removeEventListener('visibilitychange', handleTabFocus);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, []); 
+  }, []);
 
   const value = { session, profile, loading };
 
