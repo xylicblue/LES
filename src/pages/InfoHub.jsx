@@ -102,15 +102,15 @@ function InfoHub() {
                 </div>
               )}
 
-              {/* 2. Submission Section (NEW) */}
-              {module.submission_info && (
+              {/* 2. Submission Section (UPDATED KEY) */}
+              {module.submission_link && (
                 <div className="p-5 bg-background/40 rounded-xl border border-white/5 hover:border-white/10 transition-colors">
                   <div className="flex items-center gap-2 mb-3">
                     <span className="text-xl">📤</span>
                     <strong className="text-white text-sm uppercase tracking-wider">Submission</strong>
                   </div>
                   <p className="text-gray-300 leading-relaxed whitespace-pre-wrap pl-1">
-                    {renderWithLinks(module.submission_info)}
+                    {renderWithLinks(module.submission_link)}
                   </p>
                 </div>
               )}
@@ -119,7 +119,7 @@ function InfoHub() {
               {module.description && (
                 <div className="p-5 bg-background/40 rounded-xl border border-white/5 hover:border-white/10 transition-colors">
                    <div className="flex items-center gap-2 mb-3">
-                    <span className="text-xl">💼</span>
+                    <span className="text-xl">📖</span>
                     <strong className="text-white text-sm uppercase tracking-wider">Case Study</strong>
                   </div>
                   <p className="text-gray-300 leading-relaxed whitespace-pre-wrap pl-1">
@@ -132,7 +132,7 @@ function InfoHub() {
               {module.note && (
                 <div className="p-5 bg-background/40 rounded-xl border border-white/5 hover:border-white/10 transition-colors">
                    <div className="flex items-center gap-2 mb-3">
-                    <span className="text-xl">📝</span>
+                    <span className="text-xl">💡</span>
                     <strong className="text-white text-sm uppercase tracking-wider">Note</strong>
                   </div>
                   <p className="text-gray-300 leading-relaxed whitespace-pre-wrap pl-1">
