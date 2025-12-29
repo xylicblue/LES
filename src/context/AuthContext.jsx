@@ -51,7 +51,7 @@ export function AuthProvider({ children }) {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, currentSession) => {
         if (!mounted) return;
-        
+
         if (currentSession) {
           setSession(currentSession);
           if (!profile) await fetchProfile(currentSession.user.id);
@@ -63,29 +63,9 @@ export function AuthProvider({ children }) {
       }
     );
 
-    // --- 4. NEW: Auto-Logout on Tab Switch ---
-    const handleVisibilityChange = async () => {
-      // If the user hides the tab (switches tabs, minimizes window)
-      if (document.hidden) {
-        console.log("Tab hidden: Auto-logging out for security/connection reset.");
-        
-        // 1. Clear local state immediately to trigger redirect
-        if (mounted) {
-          setSession(null);
-          setProfile(null);
-        }
-
-        // 2. Kill the Supabase session
-        await supabase.auth.signOut();
-      }
-    };
-
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-
     return () => {
       mounted = false;
       subscription.unsubscribe();
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, []);
 
