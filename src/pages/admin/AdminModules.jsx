@@ -143,7 +143,7 @@ function AdminModules() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1">
                 <label className="text-sm text-text-secondary">Day</label>
-                <input type="number" name="day" min="1" max="3" value={currentModule.day} onChange={handleChange} required className="w-full p-3 bg-background border border-white/10 rounded-lg text-white focus:border-primary focus:outline-none" />
+                <input type="number" name="day" min="1" max="4" value={currentModule.day} onChange={handleChange} required className="w-full p-3 bg-background border border-white/10 rounded-lg text-white focus:border-primary focus:outline-none" />
               </div>
               <div className="space-y-1">
                 <label className="text-sm text-text-secondary">Start Time</label>
