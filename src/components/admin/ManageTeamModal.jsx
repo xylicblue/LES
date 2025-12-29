@@ -59,7 +59,7 @@ function ManageTeamModal({ team, modules }) {
         .select('current_balance')
         .eq('id', team.id)
         .single();
-        
+
       if (!teamError && teamData) {
         setBalance(teamData.current_balance);
       }
@@ -166,9 +166,9 @@ function ManageTeamModal({ team, modules }) {
   if (loading && !balance) return <div className="p-4 text-text-secondary">Loading details...</div>;
 
   return (
-    <div className="w-[500px] max-h-[85vh] overflow-y-auto p-6 bg-surface custom-scrollbar rounded-xl">
+    <div className="w-full max-w-[500px] max-h-[85vh] overflow-y-auto p-4 md:p-6 bg-surface custom-scrollbar rounded-xl">
       <div className="border-b border-white/10 pb-4 mb-6">
-        <h2 className="text-xl font-bold text-white">Manage: <span className="text-primary">{team.team_name}</span></h2>
+        <h2 className="text-lg md:text-xl font-bold text-white">Manage: <span className="text-primary">{team.team_name}</span></h2>
       </div>
       
       {message && <div className="mb-4 p-3 bg-success/20 border border-success/30 text-green-200 rounded-lg text-sm flex items-center gap-2">✅ {message}</div>}
@@ -207,32 +207,32 @@ function ManageTeamModal({ team, modules }) {
                   </div>
                   
                   <div className="grid grid-cols-3 gap-2">
-                    <button 
-                      onClick={() => handleProgressChange(module.id, 'completed')} 
-                      disabled={currentStatus === 'completed'} 
-                      className={`py-1.5 text-xs font-bold rounded transition-all ${
-                        currentStatus === 'completed' 
-                          ? 'bg-success text-white cursor-default shadow-lg shadow-success/20' 
+                    <button
+                      onClick={() => handleProgressChange(module.id, 'completed')}
+                      disabled={currentStatus === 'completed'}
+                      className={`py-2.5 text-sm font-bold rounded transition-all ${
+                        currentStatus === 'completed'
+                          ? 'bg-success text-white cursor-default shadow-lg shadow-success/20'
                           : 'bg-background border border-success/30 text-success hover:bg-success hover:text-white'
                       }`}
                     >
                       PASS
                     </button>
-                    <button 
-                      onClick={() => handleProgressChange(module.id, 'eliminated')} 
-                      disabled={currentStatus === 'eliminated'} 
-                      className={`py-1.5 text-xs font-bold rounded transition-all ${
-                        currentStatus === 'eliminated' 
-                          ? 'bg-error text-white cursor-default shadow-lg shadow-error/20' 
+                    <button
+                      onClick={() => handleProgressChange(module.id, 'eliminated')}
+                      disabled={currentStatus === 'eliminated'}
+                      className={`py-2.5 text-sm font-bold rounded transition-all ${
+                        currentStatus === 'eliminated'
+                          ? 'bg-error text-white cursor-default shadow-lg shadow-error/20'
                           : 'bg-background border border-error/30 text-error hover:bg-error hover:text-white'
                       }`}
                     >
                       FAIL
                     </button>
-                    <button 
-                      onClick={() => handleProgressChange(module.id, 'upcoming')} 
-                      disabled={currentStatus === 'upcoming'} 
-                      className="py-1.5 text-xs font-bold rounded bg-background border border-white/10 text-gray-400 hover:bg-white/10 hover:text-white transition-colors"
+                    <button
+                      onClick={() => handleProgressChange(module.id, 'upcoming')}
+                      disabled={currentStatus === 'upcoming'}
+                      className="py-2.5 text-sm font-bold rounded bg-background border border-white/10 text-gray-400 hover:bg-white/10 hover:text-white transition-colors"
                     >
                       RESET
                     </button>
@@ -249,27 +249,27 @@ function ManageTeamModal({ team, modules }) {
         <div className="pt-2">
           <h3 className="text-xs font-bold text-text-secondary uppercase tracking-widest mb-4 border-b border-white/5 pb-2">Issue Fine</h3>
           
-          {/* FIX: Using Grid to prevent button overflow */}
-          <form onSubmit={handleAddFine} className="grid grid-cols-[100px_1fr_auto] gap-3 mb-8">
-            <input 
-              type="number" 
-              placeholder="$" 
-              value={fineAmount} 
-              onChange={(e) => setFineAmount(parseFloat(e.target.value))} 
+          {/* FIX: Using Grid to prevent button overflow - Responsive on mobile */}
+          <form onSubmit={handleAddFine} className="grid grid-cols-1 sm:grid-cols-[100px_1fr_auto] gap-3 mb-8">
+            <input
+              type="number"
+              placeholder="Amount ($)"
+              value={fineAmount}
+              onChange={(e) => setFineAmount(parseFloat(e.target.value))}
               className="w-full p-2.5 bg-background border border-white/10 rounded-lg text-white text-sm focus:border-error focus:ring-1 focus:ring-error focus:outline-none transition-all"
             />
-            <input 
-              type="text" 
-              placeholder="Reason" 
-              value={fineReason} 
-              onChange={(e) => setFineReason(e.target.value)} 
+            <input
+              type="text"
+              placeholder="Reason"
+              value={fineReason}
+              onChange={(e) => setFineReason(e.target.value)}
               className="w-full p-2.5 bg-background border border-white/10 rounded-lg text-white text-sm focus:border-error focus:ring-1 focus:ring-error focus:outline-none transition-all"
             />
-            <button 
-              type="submit" 
-              className="px-6 py-2.5 bg-error text-white font-bold rounded-lg hover:bg-red-600 transition-colors shadow-lg shadow-error/20 text-sm whitespace-nowrap"
+            <button
+              type="submit"
+              className="w-full sm:w-auto px-6 py-2.5 bg-error text-white font-bold rounded-lg hover:bg-red-600 transition-colors shadow-lg shadow-error/20 text-sm whitespace-nowrap"
             >
-              Add
+              Add Fine
             </button>
           </form>
 
@@ -284,9 +284,9 @@ function ManageTeamModal({ team, modules }) {
                   </div>
                   
                   {canDeleteFine && (
-                    <button 
+                    <button
                       onClick={() => handleDeleteFine(fine.id)}
-                      className="text-xs text-text-secondary hover:text-red-400 hover:bg-white/5 px-2 py-1 rounded transition-colors opacity-0 group-hover:opacity-100"
+                      className="text-xs text-text-secondary hover:text-red-400 hover:bg-white/5 px-2 py-1 rounded transition-colors opacity-100 md:opacity-0 md:group-hover:opacity-100"
                     >
                       Remove
                     </button>

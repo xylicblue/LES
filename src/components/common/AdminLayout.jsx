@@ -118,8 +118,8 @@ function AdminLayout() {
         </div>
       </nav>
 
-      {/* Main Content Area - Updated padding to fix overlap */}
-      <main className="flex-1 overflow-y-auto p-4 pt-20 md:p-8 md:pt-20 lg:p-8 relative">
+      {/* Main Content Area - This fixes the overlapping/corner issue */}
+      <main className="flex-1 overflow-y-auto p-4 md:p-8 relative">
         <div className="max-w-7xl mx-auto">
           <Outlet />
         </div>
