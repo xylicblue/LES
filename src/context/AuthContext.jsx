@@ -9,26 +9,6 @@ export function AuthProvider({ children }) {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // === NEW: Auto-logout on Tab Switch ===
-  useEffect(() => {
-    const handleVisibilityChange = async () => {
-      // Check if the page is hidden (user switched tabs, minimized window, etc.)
-      if (document.visibilityState === 'hidden') {
-        // Trigger Supabase sign out
-        await supabase.auth.signOut();
-      }
-    };
-
-    // Add the event listener
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-
-    // Cleanup the event listener on unmount
-    return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-    };
-  }, []);
-  // ======================================
-
   useEffect(() => {
     let mounted = true;
 
@@ -49,17 +29,19 @@ export function AuthProvider({ children }) {
       }
     };
 
-    // 2. Initial Session Load
+    // 2. FORCE LOGOUT on Initial Load / Refresh
     const initializeAuth = async () => {
       try {
-        const { data: { session: initialSession } } = await supabase.auth.getSession();
+        // Instead of getting the session, we force a sign out.
+        // This clears any persisted session, forcing the user to log in again.
+        await supabase.auth.signOut();
         
-        if (mounted && initialSession) {
-          setSession(initialSession);
-          await fetchProfile(initialSession.user.id);
+        if (mounted) {
+          setSession(null);
+          setProfile(null);
         }
       } catch (error) {
-        console.error("Auth init error:", error);
+        console.error("Auth clear error:", error);
       } finally {
         if (mounted) setLoading(false);
       }
@@ -67,15 +49,26 @@ export function AuthProvider({ children }) {
 
     initializeAuth();
 
-    // 3. Listen for Supabase Auth Changes
+    // 3. Listen for Tab Switching (Visibility Change)
+    const handleVisibilityChange = async () => {
+      if (document.visibilityState === 'hidden') {
+        // User switched tabs or minimized -> Logout
+        await supabase.auth.signOut();
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    // 4. Listen for Supabase Auth Changes (Login events)
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, currentSession) => {
         if (!mounted) return;
 
         if (currentSession) {
+          // User just logged in
           setSession(currentSession);
           if (!profile) await fetchProfile(currentSession.user.id);
         } else {
+          // User logged out
           setSession(null);
           setProfile(null);
         }
@@ -83,9 +76,11 @@ export function AuthProvider({ children }) {
       }
     );
 
+    // Cleanup
     return () => {
       mounted = false;
       subscription.unsubscribe();
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, []);
 
