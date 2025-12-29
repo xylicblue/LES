@@ -9,6 +9,26 @@ export function AuthProvider({ children }) {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // === NEW: Auto-logout on Tab Switch ===
+  useEffect(() => {
+    const handleVisibilityChange = async () => {
+      // Check if the page is hidden (user switched tabs, minimized window, etc.)
+      if (document.visibilityState === 'hidden') {
+        // Trigger Supabase sign out
+        await supabase.auth.signOut();
+      }
+    };
+
+    // Add the event listener
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    // Cleanup the event listener on unmount
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, []);
+  // ======================================
+
   useEffect(() => {
     let mounted = true;
 

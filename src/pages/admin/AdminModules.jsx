@@ -14,8 +14,9 @@ const defaultModuleState = {
   venue: '', 
   venue_map_url: '', 
   description: '',      // This is now "Case Study"
-  round_guidelines: '', // New Field
-  note: ''              // New Field
+  round_guidelines: '', // Google Form links etc.
+  submission_link: '',  // === NEW FIELD ===
+  note: ''              
 };
 
 function AdminModules() {
@@ -48,6 +49,7 @@ function AdminModules() {
       ...module, 
       start_time: formattedTime,
       round_guidelines: module.round_guidelines || '',
+      submission_link: module.submission_link || '', // === NEW FIELD HANDLER ===
       note: module.note || ''
     });
     setIsModalOpen(true);
@@ -59,8 +61,6 @@ function AdminModules() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const moduleToSubmit = { ...currentModule, start_time: currentModule.start_time ? new Date(currentModule.start_time).toISOString() : null };
-    
-    // Remove null values for new fields if they are empty strings? No, Supabase handles empty strings fine.
     
     if (currentModule.id) {
       const { error } = await supabase.from('modules').update(moduleToSubmit).eq('id', currentModule.id);
@@ -170,6 +170,19 @@ function AdminModules() {
                 onChange={handleChange} 
                 placeholder="Paste links and guidelines here..."
                 className="w-full p-3 bg-background border border-white/10 rounded-lg text-white focus:border-primary focus:outline-none h-24" 
+              />
+            </div>
+            
+            {/* === SUBMISSION LINK === */}
+            <div className="space-y-1">
+              <label className="text-sm text-text-secondary">Submission Link</label>
+              <input 
+                type="text"
+                name="submission_link" 
+                value={currentModule.submission_link} 
+                onChange={handleChange} 
+                placeholder="https://..."
+                className="w-full p-3 bg-background border border-white/10 rounded-lg text-white focus:border-primary focus:outline-none" 
               />
             </div>
 
