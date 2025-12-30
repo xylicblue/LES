@@ -1,23 +1,62 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabaseClient';
+import { useAuth } from '../context/AuthContext';
 
 function InfoHub() {
+  const { profile } = useAuth(); 
   const [modules, setModules] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchModules = async () => {
+    const fetchEventData = async () => {
       setLoading(true);
       setError(null);
       try {
-        const { data, error } = await supabase
+        // 1. Fetch Basic Modules
+        const { data: modulesData, error: modError } = await supabase
           .from('modules')
           .select('*')
           .order('day', { ascending: true })
           .order('start_time', { ascending: true, nullsFirst: false });
-        if (error) throw error;
-        setModules(data);
+        if (modError) throw modError;
+
+        // 2. Fetch Assignments for this user's team
+        // We get everything and filter in JS to handle the JSON array safely
+        const { data: assignmentsData, error: assignError } = await supabase
+          .from('module_assignments')
+          .select('*');
+          
+        if (assignError) console.error("Assignment fetch error (non-critical):", assignError);
+
+        // 3. Merge Logic
+        const myTeamName = profile?.team_name; 
+
+        const mergedModules = modulesData.map(mod => {
+          // Check for assignment (Using == for loose equality safe for int/string IDs)
+          const myAssignment = assignmentsData?.find(a => 
+            a.module_id == mod.id && 
+            a.assigned_team_names && 
+            a.assigned_team_names.includes(myTeamName)
+          );
+
+          if (myAssignment) {
+            // Override default values only if custom value exists
+            return {
+              ...mod,
+              venue: myAssignment.custom_venue || mod.venue,
+              venue_map_url: myAssignment.custom_venue_map_url || mod.venue_map_url,
+              description: myAssignment.custom_case_study || mod.description,
+              round_guidelines: myAssignment.custom_round_guidelines || mod.round_guidelines,
+              submission_link: myAssignment.custom_submission_link || mod.submission_link,
+              note: myAssignment.custom_note || mod.note
+            };
+          }
+          return mod;
+        });
+
+        setModules(mergedModules);
+
       } catch (error) {
         setError(error.message);
       } finally {
@@ -25,8 +64,10 @@ function InfoHub() {
       }
     };
 
-    fetchModules();
-  }, []);
+    if (profile) {
+      fetchEventData();
+    }
+  }, [profile]);
 
   const formatTime = (timeStr) => {
     if (!timeStr) return "Time TBD";
@@ -62,7 +103,6 @@ function InfoHub() {
         {modules.map(module => (
           <div key={module.id} className="bg-surface rounded-2xl border border-white/10 p-6 md:p-8 hover:border-primary/30 transition-all duration-300 shadow-lg">
             
-            {/* Header: Name, Day, Time */}
             <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4 mb-6">
               <div>
                 <h2 className="text-xl md:text-2xl font-bold text-white mb-2">{module.name}</h2>
@@ -86,10 +126,7 @@ function InfoHub() {
               </div>
             </div>
             
-            {/* Content Sections */}
             <div className="space-y-4">
-              
-              {/* 1. Round Guidelines */}
               {module.round_guidelines && (
                 <div className="p-5 bg-background/40 rounded-xl border border-white/5 hover:border-white/10 transition-colors">
                   <div className="flex items-center gap-2 mb-3">
@@ -102,7 +139,6 @@ function InfoHub() {
                 </div>
               )}
 
-              {/* 2. Submission Section (UPDATED KEY) */}
               {module.submission_link && (
                 <div className="p-5 bg-background/40 rounded-xl border border-white/5 hover:border-white/10 transition-colors">
                   <div className="flex items-center gap-2 mb-3">
@@ -115,7 +151,6 @@ function InfoHub() {
                 </div>
               )}
 
-              {/* 3. Case Study */}
               {module.description && (
                 <div className="p-5 bg-background/40 rounded-xl border border-white/5 hover:border-white/10 transition-colors">
                    <div className="flex items-center gap-2 mb-3">
@@ -128,7 +163,6 @@ function InfoHub() {
                 </div>
               )}
 
-              {/* 4. Note */}
               {module.note && (
                 <div className="p-5 bg-background/40 rounded-xl border border-white/5 hover:border-white/10 transition-colors">
                    <div className="flex items-center gap-2 mb-3">
@@ -142,7 +176,6 @@ function InfoHub() {
               )}
             </div>
             
-            {/* Venue Map Button */}
             {module.venue_map_url && (
               <div className="mt-8 pt-6 border-t border-white/10">
                 <a 

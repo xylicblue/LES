@@ -27,7 +27,7 @@ function App() {
   }
 
   // Define who gets sent to the Admin Dashboard
-  const adminRoles = ['admin', 'fnr', 'dc', 'events'];
+  const adminRoles = ['admin', 'fnr', 'dc', 'events', 'sc'];
 
   return (
     <Routes>
