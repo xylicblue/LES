@@ -56,17 +56,23 @@ function Dashboard() {
   return (
     <div className="space-y-8 animate-fade-in pb-10">
       
-      {/* Wholesome Welcome Banner */}
-      <div className="relative overflow-hidden rounded-3xl p-4 sm:p-6 md:p-8 bg-gradient-to-r from-indigo-900 via-purple-900 to-background border border-white/10 shadow-2xl">
-        <div className="relative z-10">
-          <h1 className="text-2xl md:text-4xl font-extrabold text-white mb-2">
-            Welcome, {profile.team_name}! 👋
+      <div className="rounded-3xl p-8 md:p-10 shadow-2xl relative overflow-hidden group">
+        
+        {/* Maroon Gradient */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#3d0707] via-[#3d0707] to-[#3d0707] opacity-95 transition-all duration-500 group-hover:scale-105"></div>
+        
+        {/* Texture */}
+        <div className="absolute inset-0 opacity-20 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] mix-blend-overlay"></div>
+
+        {/* Centered Content */}
+        <div className="relative z-10 flex flex-col items-center text-center">
+          <h1 className="text-3xl md:text-5xl font-extrabold text-white mb-4 tracking-tight">
+            Welcome, <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-300">{profile?.team_name}!</span> 👋
           </h1>
-          <p className="text-sm md:text-lg text-gray-300 font-light max-w-2xl">
+          <p className="text-red-100 text-lg md:text-xl max-w-2xl leading-relaxed font-light mx-auto">
             You're doing great! Stay focused, check your modules, and let's conquer YLES together.
           </p>
         </div>
-        <div className="absolute top-0 right-0 -mr-10 -mt-10 w-64 h-64 bg-primary/20 blur-[100px] rounded-full pointer-events-none"></div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
