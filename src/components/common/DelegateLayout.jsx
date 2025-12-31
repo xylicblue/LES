@@ -4,7 +4,6 @@ import { supabase } from '../../lib/supabaseClient';
 import { useAuth } from '../../context/AuthContext';
 
 // IMPORT YOUR LOGO HERE
-// Make sure the file name matches exactly what you put in src/assets/
 import ylesLogo from '../../assets/yles-logo.png';
 
 function DelegateLayout() {
@@ -26,6 +25,7 @@ function DelegateLayout() {
 
   return (
     <div className="flex h-screen w-full bg-background overflow-hidden">
+      
       {/* Hamburger Menu Button (Mobile Only) */}
       <button
         onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -64,16 +64,23 @@ function DelegateLayout() {
         
         {/* Team Identity */}
         <div className="mb-8 text-center">
-          {/* LOGO REPLACEMENT START */}
+          
+          {/* --- LOGO FIX START --- */}
+          {/* 1. Removed 'overflow-hidden' from here so the glow doesn't get cut off */}
           <div className="w-16 h-16 md:w-24 md:h-24 mx-auto mb-4 relative group">
+            
+            {/* The Glow Effect (Behind) */}
             <div className="absolute inset-0 bg-primary/20 rounded-full blur-xl group-hover:blur-2xl transition-all duration-300"></div>
+            
+            {/* The Image (Circular Crop Applied Directly Here) */}
             <img
               src={ylesLogo}
               alt="YLES Logo"
-              className="w-full h-full object-contain relative z-10 drop-shadow-lg"
+              // 2. Added 'rounded-full' directly to the image to force circle shape
+              className="w-full h-full object-cover rounded-full relative z-10 drop-shadow-lg"
             />
           </div>
-          {/* LOGO REPLACEMENT END */}
+          {/* --- LOGO FIX END --- */}
 
           <h2 className="text-xl font-bold text-white tracking-wide">
             {profile ? profile.team_name : 'Team'}
@@ -126,12 +133,28 @@ function DelegateLayout() {
         </div>
       </nav>
 
-      {/* Main Content - Updated padding to fix overlap */}
-      <main className="flex-1 overflow-y-auto p-4 pt-20 md:p-8 md:pt-20 lg:p-8 relative bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-100">
-        <div className="max-w-6xl mx-auto">
-          <Outlet />
-        </div>
-      </main>
+      {/* === MAIN CONTAINER === */}
+      <div className="flex-1 relative h-screen overflow-hidden">
+        
+        {/* 1. BACKGROUND LAYER */}
+        <div 
+          className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
+          style={{ 
+            backgroundImage: `
+              linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
+              url('/delegate-bg.jpg')
+            `
+          }}
+        />
+
+        {/* 2. SCROLLABLE CONTENT LAYER */}
+        <main className="absolute inset-0 z-10 overflow-y-auto p-4 pt-20 md:p-8 md:pt-20 lg:p-8">
+          <div className="max-w-6xl mx-auto">
+            <Outlet />
+          </div>
+        </main>
+
+      </div>
     </div>
   );
 }
